@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  luck-chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    container_name: luck-chatbot-app
+    ports:
+      - "3131:3000"  # 호스트 3131 포트를 컨테이너 3000 포트로 매핑
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    env_file:
+      - .env.docker  # Docker 전용 환경 변수 파일
+    volumes:
+      # 개발 모드에서 코드 변경 감지를 위한 볼륨 마운트
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./next.config.js:/app/next.config.js
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tailwind.config.ts:/app/tailwind.config.ts
+      - ./postcss.config.js:/app/postcss.config.js
+      # node_modules는 제외 (컨테이너 내부 것 사용)
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
+    networks:
+      - luck-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 개발용 데이터베이스 (선택사항 - 로컬 Supabase)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: luck-chatbot-db
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: luck_chatbot
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #     - ./supabase/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+  #   networks:
+  #     - luck-network
+
+networks:
+  luck-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

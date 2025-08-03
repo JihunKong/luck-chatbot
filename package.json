@@ -1,0 +1,37 @@
+{
+  "name": "luck-chatbot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3131",
+    "dev:docker": "docker-compose up",
+    "dev:docker-build": "docker-compose up --build",
+    "build": "next build",
+    "build:docker": "docker build -t luck-chatbot .",
+    "start": "next start -p 3131",
+    "start:docker": "docker run -p 3131:3000 --env-file .env.docker luck-chatbot",
+    "lint": "next lint",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel",
+    "vercel:env": "vercel env pull .env.production.local"
+  },
+  "dependencies": {
+    "next": "14.2.21",
+    "react": "^18",
+    "react-dom": "^18",
+    "@supabase/supabase-js": "^2.45.0",
+    "openai": "^4.72.0",
+    "axios": "^1.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.21",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
